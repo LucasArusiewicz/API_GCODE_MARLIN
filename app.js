@@ -41,11 +41,61 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/demo", (req, res, next) => {
+  console.log("demo");
+  Connection.sendGcode("G1 X100.00 Y80.00 Z60.00");
+  Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+  Connection.sendGcode("G1 X10.00 Y10.00");
+  Connection.sendGcode("G1 Y0.00 Z50.00");
+  Connection.sendGcode("G1 X80.00 Z0.00");
+  Connection.sendGcode("G1 X0.00");
+  Connection.sendGcode("G1 X5.00 Y5.00 Z5.00");
+  Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+  Connection.sendGcode("G1 X5.00 Y10.00 Z5.00");
+  Connection.sendGcode("G1 X0.00 Y20.00 Z0.00");
+  Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+
+  for (let i = 0; i < 3; i++) {
+    Connection.sendGcode("G1 X2.00 Y2.00 Z2.00");
+    Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+  }
+
+  for (let i = 0; i < 10; i++) {
+    Connection.sendGcode("G1 X0.10 Y0.10 Z0.10");
+    Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+  }
+
+  for (let i = 0; i < 5; i++) {
+    Connection.sendGcode("G1 X1.00 Y1.00 Z1.00");
+    Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+  }
+
+  for (let i = 0; i < 10; i++) {
+    Connection.sendGcode("G1 X0.50 Y0.50 Z0.50");
+    Connection.sendGcode("G1 X0.00 Y0.00 Z0.00");
+  }
+
+  // Retorna resposta
+  res.status(200);
+  res.json({});
+});
+
+app.use("/exec", (req, res, next) => {
+  Connection.sendGcode(req.body.data.start);
+  if (req.body.data.end) {
+    Connection.sendGcode(req.body.data.end);
+  }
+
+  // Retorna resposta
+  res.status(200);
+  res.json({});
+});
+
 // Define Rotas para atender requisicoes
 app.use("/", (req, res, next) => {
   // Estancia Novo Comando
   let command = new Commands(Connection);
-  command.push(req.body);
+  command.push(req.body.data);
   let result = command.send();
 
   // Retorna resposta
